@@ -42,7 +42,7 @@ namespace WorkoutTracker
             dgvWorkouts.AllowUserToAddRows = false;
             dgvWorkouts.AllowUserToDeleteRows = false;
             dgvWorkouts.ReadOnly = true;
-            dgvWorkouts.MultiSelect = false;
+            dgvWorkouts.MultiSelect = true;
 
             dgvWorkouts.SelectionMode = DataGridViewSelectionMode.RowHeaderSelect;
 
@@ -148,19 +148,55 @@ namespace WorkoutTracker
 
         private void btnDelete_Click(object? sender, EventArgs e)
         {
-            if (dgvWorkouts.CurrentRow == null || dgvWorkouts.CurrentRow.Index < 0 || dgvWorkouts.CurrentRow.DataBoundItem == null)
+            var selectedWorkouts = new List<Workout>();
+            if (dgvWorkouts.SelectedRows.Count > 0)
             {
-                MessageBox.Show("Оберіть рядок у таблиці для видалення.", "Повідомлення", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                foreach (DataGridViewRow row in dgvWorkouts.SelectedRows)
+                {
+                    if (row.DataBoundItem is Workout workout && !selectedWorkouts.Contains(workout))
+                    {
+                        selectedWorkouts.Add(workout);
+                    }
+                }
+            }
+            else if (dgvWorkouts.SelectedCells.Count > 0)
+            {
+                foreach (DataGridViewCell cell in dgvWorkouts.SelectedCells)
+                {
+                    if (cell.OwningRow?.DataBoundItem is Workout workout && !selectedWorkouts.Contains(workout))
+                    {
+                        selectedWorkouts.Add(workout);
+                    }
+                }
+            }
+
+            if (selectedWorkouts.Count == 0)
+            {
+                MessageBox.Show(
+                    "Оберіть один або декілька рядків у таблиці для видалення.",
+                    "Повідомлення",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
                 return;
             }
 
-            var selectedWorkout = (Workout)dgvWorkouts.CurrentRow.DataBoundItem;
+            string confirmMessage = selectedWorkouts.Count == 1
+                ? $"Ви дійсно бажаєте видалити тренування «{selectedWorkouts[0].Title}»?"
+                : $"Ви дійсно бажаєте видалити обрані тренування ({selectedWorkouts.Count} шт.)?";
 
-            var confirmResults = MessageBox.Show($"Ви дійсно бажаєте видалити тренування «{selectedWorkout.Title}»?", "Підтвердження видалення", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            var confirmResults = MessageBox.Show(
+                confirmMessage,
+                "підтвердження видалення",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
 
             if (confirmResults == DialogResult.Yes)
             {
-                _workouts.Remove(selectedWorkout);
+                foreach (var workout in selectedWorkouts)
+                {
+                    _workouts.Remove(workout);
+                }
+
                 RefreshGrid();
                 _isModified = true;
             }
