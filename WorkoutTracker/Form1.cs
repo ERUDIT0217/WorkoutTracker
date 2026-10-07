@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace WorkoutTracker
 {
@@ -62,8 +63,24 @@ namespace WorkoutTracker
 
         private void RefreshGrid()
         {
-            _bindingSource.DataSource = null;
-            _bindingSource.DataSource = _workouts;
+            string query = txtSearch.Text.Trim().ToLower();
+
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                _bindingSource.DataSource = null;
+                _bindingSource.DataSource = _workouts;
+            }
+
+            else
+            {
+                var filteredList = _workouts
+                    .Where(w => w.Title != null && w.Title.ToLower().Contains(query))
+                    .ToList();
+
+                _bindingSource.DataSource = null;
+                _bindingSource.DataSource = filteredList;
+            }
+
             _bindingSource.ResetBindings(false);
         }
 
@@ -262,5 +279,9 @@ namespace WorkoutTracker
             }
         }
 
+        private void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+            RefreshGrid();
+        }
     }
 }

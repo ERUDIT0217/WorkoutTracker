@@ -30,6 +30,8 @@
         {
             dgvWorkouts = new DataGridView();
             groupBox1 = new GroupBox();
+            btnDelete = new Button();
+            btnSave = new Button();
             cmbActivityType = new ComboBox();
             label9 = new Label();
             numUserWeight = new NumericUpDown();
@@ -51,8 +53,8 @@
             lblTitle = new Label();
             cmbWorkoutType = new ComboBox();
             label1 = new Label();
-            btnDelete = new Button();
-            btnSave = new Button();
+            label10 = new Label();
+            txtSearch = new TextBox();
             ((System.ComponentModel.ISupportInitialize)dgvWorkouts).BeginInit();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numUserWeight).BeginInit();
@@ -68,18 +70,20 @@
             dgvWorkouts.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvWorkouts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvWorkouts.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvWorkouts.Location = new Point(-1, 0);
+            dgvWorkouts.Location = new Point(1, 71);
             dgvWorkouts.MultiSelect = false;
             dgvWorkouts.Name = "dgvWorkouts";
             dgvWorkouts.ReadOnly = true;
             dgvWorkouts.RowHeadersWidth = 51;
             dgvWorkouts.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvWorkouts.Size = new Size(703, 690);
+            dgvWorkouts.Size = new Size(703, 781);
             dgvWorkouts.TabIndex = 0;
             // 
             // groupBox1
             // 
             groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            groupBox1.Controls.Add(btnDelete);
+            groupBox1.Controls.Add(btnSave);
             groupBox1.Controls.Add(cmbActivityType);
             groupBox1.Controls.Add(label9);
             groupBox1.Controls.Add(numUserWeight);
@@ -103,10 +107,30 @@
             groupBox1.Controls.Add(label1);
             groupBox1.Location = new Point(766, 0);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(316, 775);
+            groupBox1.Size = new Size(316, 855);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Нове тренування";
+            // 
+            // btnDelete
+            // 
+            btnDelete.Location = new Point(6, 798);
+            btnDelete.Name = "btnDelete";
+            btnDelete.Size = new Size(156, 29);
+            btnDelete.TabIndex = 2;
+            btnDelete.Text = "Видалити вибране";
+            btnDelete.UseVisualStyleBackColor = true;
+            btnDelete.Click += btnDelete_Click;
+            // 
+            // btnSave
+            // 
+            btnSave.Location = new Point(6, 753);
+            btnSave.Name = "btnSave";
+            btnSave.Size = new Size(148, 29);
+            btnSave.TabIndex = 3;
+            btnSave.Text = "Зберегти у файл";
+            btnSave.UseVisualStyleBackColor = true;
+            btnSave.Click += btnSave_Click;
             // 
             // cmbActivityType
             // 
@@ -301,38 +325,33 @@
             label1.TabIndex = 0;
             label1.Text = "Тип тренування:";
             // 
-            // btnDelete
+            // label10
             // 
-            btnDelete.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            btnDelete.Location = new Point(41, 704);
-            btnDelete.Name = "btnDelete";
-            btnDelete.Size = new Size(156, 29);
-            btnDelete.TabIndex = 2;
-            btnDelete.Text = "Видалити вибране";
-            btnDelete.UseVisualStyleBackColor = true;
-            btnDelete.Click += btnDelete_Click;
+            label10.AutoSize = true;
+            label10.Location = new Point(16, 28);
+            label10.Name = "label10";
+            label10.Size = new Size(58, 20);
+            label10.TabIndex = 2;
+            label10.Text = "Пошук:";
             // 
-            // btnSave
+            // txtSearch
             // 
-            btnSave.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            btnSave.Location = new Point(281, 704);
-            btnSave.Name = "btnSave";
-            btnSave.Size = new Size(148, 29);
-            btnSave.TabIndex = 3;
-            btnSave.Text = "Зберегти у файл";
-            btnSave.UseVisualStyleBackColor = true;
-            btnSave.Click += btnSave_Click;
+            txtSearch.Location = new Point(80, 25);
+            txtSearch.Name = "txtSearch";
+            txtSearch.Size = new Size(125, 27);
+            txtSearch.TabIndex = 3;
+            txtSearch.TextChanged += txtSearch_TextChanged;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1082, 773);
-            Controls.Add(btnSave);
-            Controls.Add(btnDelete);
+            ClientSize = new Size(1082, 853);
+            Controls.Add(txtSearch);
+            Controls.Add(label10);
             Controls.Add(groupBox1);
             Controls.Add(dgvWorkouts);
-            MinimumSize = new Size(1100, 780);
+            MinimumSize = new Size(1100, 900);
             Name = "Form1";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "WorkoutTracker";
@@ -346,6 +365,7 @@
             ((System.ComponentModel.ISupportInitialize)numDistance).EndInit();
             ((System.ComponentModel.ISupportInitialize)numDuration).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -375,5 +395,7 @@
         private NumericUpDown numUserWeight;
         private ComboBox cmbActivityType;
         private Label label9;
+        private Label label10;
+        private TextBox txtSearch;
     }
 }
