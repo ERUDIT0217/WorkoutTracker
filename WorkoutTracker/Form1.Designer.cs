@@ -55,6 +55,8 @@
             label1 = new Label();
             label10 = new Label();
             txtSearch = new TextBox();
+            groupBox2 = new GroupBox();
+            lblSummary = new Label();
             ((System.ComponentModel.ISupportInitialize)dgvWorkouts).BeginInit();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numUserWeight).BeginInit();
@@ -63,6 +65,7 @@
             ((System.ComponentModel.ISupportInitialize)numSets).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numDistance).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numDuration).BeginInit();
+            groupBox2.SuspendLayout();
             SuspendLayout();
             // 
             // dgvWorkouts
@@ -76,7 +79,7 @@
             dgvWorkouts.ReadOnly = true;
             dgvWorkouts.RowHeadersWidth = 51;
             dgvWorkouts.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvWorkouts.Size = new Size(703, 781);
+            dgvWorkouts.Size = new Size(703, 662);
             dgvWorkouts.TabIndex = 0;
             // 
             // groupBox1
@@ -342,11 +345,31 @@
             txtSearch.TabIndex = 3;
             txtSearch.TextChanged += txtSearch_TextChanged;
             // 
+            // groupBox2
+            // 
+            groupBox2.Controls.Add(lblSummary);
+            groupBox2.Location = new Point(1, 753);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new Size(703, 102);
+            groupBox2.TabIndex = 4;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "Підсумкова статистика";
+            // 
+            // lblSummary
+            // 
+            lblSummary.AutoSize = true;
+            lblSummary.Location = new Point(6, 45);
+            lblSummary.Name = "lblSummary";
+            lblSummary.Size = new Size(331, 20);
+            lblSummary.TabIndex = 0;
+            lblSummary.Text = "Всього тренувань: 0 | Час: 0 хв | Калорії: 0 ккал";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1082, 853);
+            Controls.Add(groupBox2);
             Controls.Add(txtSearch);
             Controls.Add(label10);
             Controls.Add(groupBox1);
@@ -364,6 +387,8 @@
             ((System.ComponentModel.ISupportInitialize)numSets).EndInit();
             ((System.ComponentModel.ISupportInitialize)numDistance).EndInit();
             ((System.ComponentModel.ISupportInitialize)numDuration).EndInit();
+            groupBox2.ResumeLayout(false);
+            groupBox2.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -397,5 +422,7 @@
         private Label label9;
         private Label label10;
         private TextBox txtSearch;
+        private GroupBox groupBox2;
+        private Label lblSummary;
     }
 }

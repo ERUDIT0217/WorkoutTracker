@@ -33,6 +33,8 @@ namespace WorkoutTracker
 
             if (cmbActivityType.Items.Count > 0)
                 cmbActivityType.SelectedIndex = 0;
+
+            RefreshGrid();
         }
 
         private void ConfigureGridColumnsExplicitly()
@@ -64,24 +66,27 @@ namespace WorkoutTracker
         private void RefreshGrid()
         {
             string query = txtSearch.Text.Trim().ToLower();
+            List<Workout> displayedWorkouts;
 
             if (string.IsNullOrWhiteSpace(query))
             {
-                _bindingSource.DataSource = null;
-                _bindingSource.DataSource = _workouts;
+                displayedWorkouts = _workouts;
             }
 
             else
             {
-                var filteredList = _workouts
+                displayedWorkouts = _workouts
                     .Where(w => w.Title != null && w.Title.ToLower().Contains(query))
                     .ToList();
 
-                _bindingSource.DataSource = null;
-                _bindingSource.DataSource = filteredList;
+                
             }
 
+            _bindingSource.DataSource = null;
+            _bindingSource.DataSource = displayedWorkouts;
             _bindingSource.ResetBindings(false);
+
+            UpdateSummaryStatistic(displayedWorkouts);
         }
 
         private void cmbWorkoutType_SelectedIndexChanged(object sender, EventArgs e)
@@ -282,6 +287,17 @@ namespace WorkoutTracker
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
             RefreshGrid();
+        }
+
+        private void UpdateSummaryStatistic(IEnumerable<Workout> currentWorkouts)
+        {
+            var list = currentWorkouts.ToList();
+
+            int totalCount = list.Count;
+            int totalDuration = list.Sum(w => w.DurationInMinutes);
+            double totalCalories = list.Sum(w => w.CalculateCaloriesBurned());
+
+            lblSummary.Text = $"Всього тренувань: {totalCount} | Загальний час: {totalDuration} хв | Спалено: {totalCalories:F1} ккал";
         }
     }
 }
