@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using System.Linq;
 
 namespace WorkoutTracker
@@ -11,6 +10,7 @@ namespace WorkoutTracker
         private List<Workout> _workouts = new List<Workout>();
         private readonly BindingSource _bindingSource = new BindingSource();
         private bool _isModified = false;
+        private bool _isDarkTheme = false;
 
         public Form1()
         {
@@ -35,6 +35,8 @@ namespace WorkoutTracker
                 cmbActivityType.SelectedIndex = 0;
 
             RefreshGrid();
+
+            ApplyTheme();
         }
 
         private void ConfigureGridColumnsExplicitly()
@@ -79,7 +81,7 @@ namespace WorkoutTracker
                     .Where(w => w.Title != null && w.Title.ToLower().Contains(query))
                     .ToList();
 
-                
+
             }
 
             _bindingSource.DataSource = null;
@@ -298,6 +300,211 @@ namespace WorkoutTracker
             double totalCalories = list.Sum(w => w.CalculateCaloriesBurned());
 
             lblSummary.Text = $"Всього тренувань: {totalCount} | Загальний час: {totalDuration} хв | Спалено: {totalCalories:F1} ккал";
+        }
+
+        private void ApplyTheme()
+        {
+            void UpdateLabelsColor(Control parent, Color color)
+            {
+                foreach (Control c in parent.Controls)
+                {
+                    if (c is Label lbl && lbl != lblNewWorkoutTitle && lbl != lblSummaryTitle)
+                    {
+                        lbl.ForeColor = color;
+                    }
+                    if (c.HasChildren)
+                    {
+                        UpdateLabelsColor(c, color);
+                    }
+                }
+            }
+
+            if (_isDarkTheme)
+            {
+                var formBg = Color.FromArgb(20, 20, 22);
+                var cardBg = Color.FromArgb(32, 33, 36);
+                var inputBg = Color.FromArgb(42, 43, 46);
+                var textLight = Color.FromArgb(240, 240, 240);
+                var subText = Color.FromArgb(160, 160, 165);
+                var borderDark = Color.FromArgb(60, 62, 66);
+
+                this.BackColor = formBg;
+                this.ForeColor = textLight;
+
+                btnToggleTheme.Text = "☀️ Світла тема";
+                btnToggleTheme.BackColor = cardBg;
+                btnToggleTheme.ForeColor = textLight;
+                btnToggleTheme.FlatAppearance.BorderColor = borderDark;
+
+                btnSave.BackColor = cardBg;
+                btnSave.ForeColor = textLight;
+                btnSave.FlatAppearance.BorderColor = borderDark;
+
+                btnDelete.BackColor = Color.FromArgb(55, 25, 25);
+                btnDelete.ForeColor = Color.FromArgb(245, 120, 120);
+                btnDelete.FlatAppearance.BorderColor = Color.FromArgb(90, 35, 35);
+
+                btnAddWorkout.BackColor = Color.FromArgb(50, 52, 58);
+                btnAddWorkout.ForeColor = Color.White;
+
+                panelWorkoutInput.BackColor = cardBg;
+                panelSummary.BackColor = cardBg;
+
+                lblNewWorkoutTitle.ForeColor = textLight;
+                lblSummaryTitle.ForeColor = textLight;
+                lblSummary.ForeColor = textLight;
+                lblSearch.ForeColor = textLight;
+
+                UpdateLabelsColor(panelWorkoutInput, subText);
+
+                txtSearch.BackColor = inputBg;
+                txtSearch.ForeColor = textLight;
+                txtTitle.BackColor = inputBg;
+                txtTitle.ForeColor = textLight;
+
+                NumericUpDown[] numControls = { numUserWeight, numDuration, numDistance, numSets, numReps, numWeightLifted };
+                foreach (var num in numControls)
+                {
+                    if (num != null)
+                    {
+                        num.BackColor = inputBg;
+                        num.ForeColor = textLight;
+                    }
+                }
+
+                ComboBox[] cmbControls = { cmbWorkoutType, cmbActivityType };
+                foreach (var cmb in cmbControls)
+                {
+                    if (cmb != null)
+                    {
+                        cmb.BackColor = inputBg;
+                        cmb.ForeColor = textLight;
+                        cmb.FlatStyle = FlatStyle.Flat;
+                    }
+                }
+
+                if (dtpDate != null)
+                {
+                    dtpDate.CalendarMonthBackground = cardBg;
+                    dtpDate.CalendarTitleBackColor = cardBg;
+                    dtpDate.CalendarForeColor = textLight;
+                    dtpDate.CalendarTitleForeColor = textLight;
+
+                    dtpDate.Format = DateTimePickerFormat.Custom;
+                    dtpDate.CustomFormat = "dd.MM.yyyy";
+                    dtpDate.BackColor = inputBg;
+                    dtpDate.ForeColor = textLight;
+                }
+
+                dgvWorkouts.BackgroundColor = cardBg;
+                dgvWorkouts.GridColor = borderDark;
+                dgvWorkouts.DefaultCellStyle.BackColor = cardBg;
+                dgvWorkouts.DefaultCellStyle.ForeColor = textLight;
+                dgvWorkouts.DefaultCellStyle.SelectionBackColor = Color.FromArgb(55, 60, 70);
+                dgvWorkouts.DefaultCellStyle.SelectionForeColor = Color.White;
+
+                dgvWorkouts.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(28, 29, 31);
+                dgvWorkouts.AlternatingRowsDefaultCellStyle.ForeColor = textLight;
+
+                dgvWorkouts.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(24, 25, 27);
+                dgvWorkouts.ColumnHeadersDefaultCellStyle.ForeColor = textLight;
+            }
+            else
+            {
+                var formBg = Color.FromArgb(226, 232, 240);
+                var cardBg = Color.White;
+                var textDark = Color.FromArgb(30, 41, 59);
+                var subText = Color.FromArgb(71, 85, 105);
+                var borderLight = Color.FromArgb(226, 232, 240);
+                var buttonBorder = Color.FromArgb(209, 213, 219);
+
+                this.BackColor = formBg;
+                this.ForeColor = textDark;
+
+                btnToggleTheme.Text = "🌙 Темна тема";
+                btnToggleTheme.BackColor = cardBg;
+                btnToggleTheme.ForeColor = textDark;
+                btnToggleTheme.FlatAppearance.BorderColor = buttonBorder;
+
+                btnSave.BackColor = cardBg;
+                btnSave.ForeColor = textDark;
+                btnSave.FlatAppearance.BorderColor = buttonBorder;
+
+                btnDelete.BackColor = Color.FromArgb(254, 226, 226);
+                btnDelete.ForeColor = Color.FromArgb(185, 28, 28);
+                btnDelete.FlatAppearance.BorderColor = Color.FromArgb(254, 202, 202);
+
+                btnAddWorkout.BackColor = Color.FromArgb(37, 99, 235);
+                btnAddWorkout.ForeColor = Color.White;
+
+                panelWorkoutInput.BackColor = cardBg;
+                panelSummary.BackColor = cardBg;
+
+                lblNewWorkoutTitle.ForeColor = textDark;
+                lblSummaryTitle.ForeColor = textDark;
+                lblSummary.ForeColor = textDark;
+                lblSearch.ForeColor = textDark;
+
+                UpdateLabelsColor(panelWorkoutInput, subText);
+
+                txtSearch.BackColor = cardBg;
+                txtSearch.ForeColor = textDark;
+                txtTitle.BackColor = cardBg;
+                txtTitle.ForeColor = textDark;
+
+                NumericUpDown[] numControls = { numUserWeight, numDuration, numDistance, numSets, numReps, numWeightLifted };
+                foreach (var num in numControls)
+                {
+                    if (num != null)
+                    {
+                        num.BackColor = cardBg;
+                        num.ForeColor = textDark;
+                    }
+                }
+
+                ComboBox[] cmbControls = { cmbWorkoutType, cmbActivityType };
+                foreach (var cmb in cmbControls)
+                {
+                    if (cmb != null)
+                    {
+                        cmb.BackColor = cardBg;
+                        cmb.ForeColor = textDark;
+                        cmb.FlatStyle = FlatStyle.Flat;
+                    }
+                }
+
+                if (dtpDate != null)
+                {
+                    dtpDate.CalendarMonthBackground = cardBg;
+                    dtpDate.CalendarTitleBackColor = cardBg;
+                    dtpDate.CalendarForeColor = textDark;
+                    dtpDate.CalendarTitleForeColor = textDark;
+
+                    dtpDate.Format = DateTimePickerFormat.Custom;
+                    dtpDate.CustomFormat = "dd.MM.yyyy";
+                    dtpDate.BackColor = cardBg;
+                    dtpDate.ForeColor = textDark;
+                }
+
+                dgvWorkouts.BackgroundColor = cardBg;
+                dgvWorkouts.GridColor = borderLight;
+                dgvWorkouts.DefaultCellStyle.BackColor = cardBg;
+                dgvWorkouts.DefaultCellStyle.ForeColor = textDark;
+                dgvWorkouts.DefaultCellStyle.SelectionBackColor = Color.FromArgb(219, 234, 254);
+                dgvWorkouts.DefaultCellStyle.SelectionForeColor = textDark;
+
+                dgvWorkouts.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 250, 252);
+                dgvWorkouts.AlternatingRowsDefaultCellStyle.ForeColor = textDark;
+
+                dgvWorkouts.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(241, 245, 249);
+                dgvWorkouts.ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(51, 65, 85);
+            }
+        }
+
+        private void btnToggleTheme_Click(object sender, EventArgs e)
+        {
+            _isDarkTheme = !_isDarkTheme;
+            ApplyTheme();
         }
     }
 }
