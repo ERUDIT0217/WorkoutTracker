@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace WorkoutTracker
 {
@@ -18,7 +20,6 @@ namespace WorkoutTracker
 
             this.KeyPreview = true;
             this.KeyDown += Form1_KeyDown;
-
             this.FormClosing += Form1_FormClosing;
 
             ConfigureGridColumnsExplicitly();
@@ -28,14 +29,7 @@ namespace WorkoutTracker
             _bindingSource.DataSource = _workouts;
             dgvWorkouts.DataSource = _bindingSource;
 
-            if (cmbWorkoutType.Items.Count > 0)
-                cmbWorkoutType.SelectedIndex = 0;
-
-            if (cmbActivityType.Items.Count > 0)
-                cmbActivityType.SelectedIndex = 0;
-
             RefreshGrid();
-
             ApplyTheme();
         }
 
@@ -74,14 +68,11 @@ namespace WorkoutTracker
             {
                 displayedWorkouts = _workouts;
             }
-
             else
             {
                 displayedWorkouts = _workouts
                     .Where(w => w.Title != null && w.Title.ToLower().Contains(query))
                     .ToList();
-
-
             }
 
             _bindingSource.DataSource = null;
@@ -89,85 +80,6 @@ namespace WorkoutTracker
             _bindingSource.ResetBindings(false);
 
             UpdateSummaryStatistic(displayedWorkouts);
-        }
-
-        private void cmbWorkoutType_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            string selectedType = cmbWorkoutType.SelectedItem?.ToString() ?? "";
-
-            if (selectedType == "Кардіо")
-            {
-                numDistance.Enabled = true;
-                cmbActivityType.Enabled = true;
-
-                numSets.Enabled = false;
-                numReps.Enabled = false;
-                numWeightLifted.Enabled = false;
-            }
-            else if (selectedType == "Силове")
-            {
-                numDistance.Enabled = false;
-                cmbActivityType.Enabled = false;
-
-                numSets.Enabled = true;
-                numReps.Enabled = true;
-                numWeightLifted.Enabled = true;
-            }
-        }
-
-        private void btnAddWorkout_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                string title = txtTitle.Text.Trim();
-                DateTime date = dtpDate.Value.Date;
-                int duration = (int)numDuration.Value;
-                double userWeight = (double)numUserWeight.Value;
-
-                if (string.IsNullOrWhiteSpace(title))
-                {
-                    MessageBox.Show("Будь ласка, введіть назву тренування.", "Помилка введення", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    txtTitle.Focus();
-                    return;
-                }
-
-                string selectedType = cmbWorkoutType.SelectedItem?.ToString() ?? "";
-                Workout newWorkout;
-
-                if (selectedType == "Кардіо")
-                {
-                    double distance = (double)numDistance.Value;
-                    string activity = cmbActivityType.SelectedItem?.ToString() ?? "Біг";
-                    newWorkout = new CardioWorkout(title, date, duration, userWeight, activity, distance);
-                }
-                else if (selectedType == "Силове")
-                {
-                    int sets = (int)numSets.Value;
-                    int reps = (int)numReps.Value;
-                    double weightLifted = (double)numWeightLifted.Value;
-                    newWorkout = new StrengthWorkout(title, date, duration, userWeight, sets, reps, weightLifted);
-                }
-                else
-                {
-                    MessageBox.Show("Оберіть тип тренування зі списку.", "Увага", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                _workouts.Add(newWorkout);
-                RefreshGrid();
-                _isModified = true;
-
-                txtTitle.Clear();
-                txtTitle.Focus();
-            }
-            catch (ArgumentException ex)
-            {
-                MessageBox.Show(ex.Message, "Помилка валідації", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Непередбачена помилка: {ex.Message}", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
 
         private void btnDelete_Click(object? sender, EventArgs e)
@@ -210,7 +122,7 @@ namespace WorkoutTracker
 
             var confirmResults = MessageBox.Show(
                 confirmMessage,
-                "підтвердження видалення",
+                "Підтвердження видалення",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
 
@@ -249,9 +161,6 @@ namespace WorkoutTracker
             }
             else if (e.KeyCode == Keys.Delete)
             {
-                if (txtTitle.Focused)
-                    return;
-
                 e.SuppressKeyPress = true;
                 btnDelete_Click(sender, EventArgs.Empty);
             }
@@ -304,28 +213,12 @@ namespace WorkoutTracker
 
         private void ApplyTheme()
         {
-            void UpdateLabelsColor(Control parent, Color color)
-            {
-                foreach (Control c in parent.Controls)
-                {
-                    if (c is Label lbl && lbl != lblNewWorkoutTitle && lbl != lblSummaryTitle)
-                    {
-                        lbl.ForeColor = color;
-                    }
-                    if (c.HasChildren)
-                    {
-                        UpdateLabelsColor(c, color);
-                    }
-                }
-            }
-
             if (_isDarkTheme)
             {
                 var formBg = Color.FromArgb(20, 20, 22);
                 var cardBg = Color.FromArgb(32, 33, 36);
                 var inputBg = Color.FromArgb(42, 43, 46);
                 var textLight = Color.FromArgb(240, 240, 240);
-                var subText = Color.FromArgb(160, 160, 165);
                 var borderDark = Color.FromArgb(60, 62, 66);
 
                 this.BackColor = formBg;
@@ -344,57 +237,18 @@ namespace WorkoutTracker
                 btnDelete.ForeColor = Color.FromArgb(245, 120, 120);
                 btnDelete.FlatAppearance.BorderColor = Color.FromArgb(90, 35, 35);
 
-                btnAddWorkout.BackColor = Color.FromArgb(50, 52, 58);
-                btnAddWorkout.ForeColor = Color.White;
+                btnOpenAddForm.BackColor = Color.FromArgb(50, 52, 58);
+                btnOpenAddForm.ForeColor = Color.White;
+                btnOpenAddForm.FlatAppearance.BorderColor = borderDark;
 
-                panelWorkoutInput.BackColor = cardBg;
                 panelSummary.BackColor = cardBg;
 
-                lblNewWorkoutTitle.ForeColor = textLight;
                 lblSummaryTitle.ForeColor = textLight;
                 lblSummary.ForeColor = textLight;
                 lblSearch.ForeColor = textLight;
 
-                UpdateLabelsColor(panelWorkoutInput, subText);
-
                 txtSearch.BackColor = inputBg;
                 txtSearch.ForeColor = textLight;
-                txtTitle.BackColor = inputBg;
-                txtTitle.ForeColor = textLight;
-
-                NumericUpDown[] numControls = { numUserWeight, numDuration, numDistance, numSets, numReps, numWeightLifted };
-                foreach (var num in numControls)
-                {
-                    if (num != null)
-                    {
-                        num.BackColor = inputBg;
-                        num.ForeColor = textLight;
-                    }
-                }
-
-                ComboBox[] cmbControls = { cmbWorkoutType, cmbActivityType };
-                foreach (var cmb in cmbControls)
-                {
-                    if (cmb != null)
-                    {
-                        cmb.BackColor = inputBg;
-                        cmb.ForeColor = textLight;
-                        cmb.FlatStyle = FlatStyle.Flat;
-                    }
-                }
-
-                if (dtpDate != null)
-                {
-                    dtpDate.CalendarMonthBackground = cardBg;
-                    dtpDate.CalendarTitleBackColor = cardBg;
-                    dtpDate.CalendarForeColor = textLight;
-                    dtpDate.CalendarTitleForeColor = textLight;
-
-                    dtpDate.Format = DateTimePickerFormat.Custom;
-                    dtpDate.CustomFormat = "dd.MM.yyyy";
-                    dtpDate.BackColor = inputBg;
-                    dtpDate.ForeColor = textLight;
-                }
 
                 dgvWorkouts.BackgroundColor = cardBg;
                 dgvWorkouts.GridColor = borderDark;
@@ -414,7 +268,6 @@ namespace WorkoutTracker
                 var formBg = Color.FromArgb(226, 232, 240);
                 var cardBg = Color.White;
                 var textDark = Color.FromArgb(30, 41, 59);
-                var subText = Color.FromArgb(71, 85, 105);
                 var borderLight = Color.FromArgb(226, 232, 240);
                 var buttonBorder = Color.FromArgb(209, 213, 219);
 
@@ -434,57 +287,18 @@ namespace WorkoutTracker
                 btnDelete.ForeColor = Color.FromArgb(185, 28, 28);
                 btnDelete.FlatAppearance.BorderColor = Color.FromArgb(254, 202, 202);
 
-                btnAddWorkout.BackColor = Color.FromArgb(37, 99, 235);
-                btnAddWorkout.ForeColor = Color.White;
+                btnOpenAddForm.BackColor = Color.FromArgb(37, 99, 235);
+                btnOpenAddForm.ForeColor = Color.White;
+                btnOpenAddForm.FlatAppearance.BorderColor = Color.FromArgb(37, 99, 235);
 
-                panelWorkoutInput.BackColor = cardBg;
                 panelSummary.BackColor = cardBg;
 
-                lblNewWorkoutTitle.ForeColor = textDark;
                 lblSummaryTitle.ForeColor = textDark;
                 lblSummary.ForeColor = textDark;
                 lblSearch.ForeColor = textDark;
 
-                UpdateLabelsColor(panelWorkoutInput, subText);
-
                 txtSearch.BackColor = cardBg;
                 txtSearch.ForeColor = textDark;
-                txtTitle.BackColor = cardBg;
-                txtTitle.ForeColor = textDark;
-
-                NumericUpDown[] numControls = { numUserWeight, numDuration, numDistance, numSets, numReps, numWeightLifted };
-                foreach (var num in numControls)
-                {
-                    if (num != null)
-                    {
-                        num.BackColor = cardBg;
-                        num.ForeColor = textDark;
-                    }
-                }
-
-                ComboBox[] cmbControls = { cmbWorkoutType, cmbActivityType };
-                foreach (var cmb in cmbControls)
-                {
-                    if (cmb != null)
-                    {
-                        cmb.BackColor = cardBg;
-                        cmb.ForeColor = textDark;
-                        cmb.FlatStyle = FlatStyle.Flat;
-                    }
-                }
-
-                if (dtpDate != null)
-                {
-                    dtpDate.CalendarMonthBackground = cardBg;
-                    dtpDate.CalendarTitleBackColor = cardBg;
-                    dtpDate.CalendarForeColor = textDark;
-                    dtpDate.CalendarTitleForeColor = textDark;
-
-                    dtpDate.Format = DateTimePickerFormat.Custom;
-                    dtpDate.CustomFormat = "dd.MM.yyyy";
-                    dtpDate.BackColor = cardBg;
-                    dtpDate.ForeColor = textDark;
-                }
 
                 dgvWorkouts.BackgroundColor = cardBg;
                 dgvWorkouts.GridColor = borderLight;
@@ -505,6 +319,19 @@ namespace WorkoutTracker
         {
             _isDarkTheme = !_isDarkTheme;
             ApplyTheme();
+        }
+
+        private void btnOpenAddForm_Click_1(object sender, EventArgs e)
+        {
+            using (var addForm = new AddWorkoutForm(_isDarkTheme))
+            {
+                if (addForm.ShowDialog(this) == DialogResult.OK && addForm.CreatedWorkout != null)
+                {
+                    _workouts.Add(addForm.CreatedWorkout);
+                    RefreshGrid();
+                    _isModified = true;
+                }
+            }
         }
     }
 }
