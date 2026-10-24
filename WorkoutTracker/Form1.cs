@@ -8,15 +8,21 @@ namespace WorkoutTracker
 {
     public partial class Form1 : Form
     {
-        private readonly WorkoutRepository _repository = new WorkoutRepository();
+        private string _username;
+        private readonly WorkoutRepository _repository;
         private List<Workout> _workouts = new List<Workout>();
         private readonly BindingSource _bindingSource = new BindingSource();
         private bool _isModified = false;
         private bool _isDarkTheme = false;
 
-        public Form1()
+        public Form1(string username, bool initialDarkTheme)
         {
             InitializeComponent();
+
+            _username = username;
+            _isDarkTheme = initialDarkTheme;
+            _repository = new WorkoutRepository(_username);
+            this.Text = $"WorkoutTracker — Профіль: {_username}";
 
             this.KeyPreview = true;
             this.KeyDown += Form1_KeyDown;
@@ -411,6 +417,7 @@ namespace WorkoutTracker
         {
             _isDarkTheme = !_isDarkTheme;
             ApplyTheme();
+            Program.SaveThemePreference(_isDarkTheme);
         }
 
         private void btnOpenAddForm_Click_1(object sender, EventArgs e)

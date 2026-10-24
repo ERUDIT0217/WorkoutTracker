@@ -9,9 +9,9 @@ namespace WorkoutTracker
     {
         private readonly string _filePath;
         private readonly JsonSerializerOptions _jsonOptions;
-        public WorkoutRepository(string filePath = "workout.json")
+        public WorkoutRepository(string username)
         {
-            _filePath = filePath;
+            _filePath = $"workouts_{username}.json";
             _jsonOptions = new JsonSerializerOptions
             {
                 WriteIndented = true
@@ -33,7 +33,8 @@ namespace WorkoutTracker
 
             string jsonString = File.ReadAllText(_filePath);
 
-            if (string.IsNullOrWhiteSpace(jsonString)) {
+            if (string.IsNullOrWhiteSpace(jsonString))
+            {
                 return new List<Workout>();
             }
 
