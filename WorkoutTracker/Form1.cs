@@ -20,10 +20,16 @@ namespace WorkoutTracker
 
             this.KeyPreview = true;
             this.KeyDown += Form1_KeyDown;
-            this.FormClosing += Form1_FormClosing;
+            this.FormClosing += Form1_FormClosing; 
+
             dgvWorkouts.CurrentCellDirtyStateChanged += dgvWorkouts_CurrentCellDirtyStateChanged;
             dgvWorkouts.CellValueChanged += dgvWorkouts_CellValueChanged;
+
             dgvWorkouts.RowPrePaint += dgvWorkouts_RowPrePaint;
+
+            chkEnableDateFilter.CheckedChanged += chkEnableDateFilter_CheckedChanged;
+            dtpStartDate.ValueChanged += dtpStartDate_ValueChanged;
+            dtpEndDate.ValueChanged += dtpEndDate_ValueChanged;
 
             ConfigureGridColumnsExplicitly();
 
@@ -72,24 +78,49 @@ namespace WorkoutTracker
         private void RefreshGrid()
         {
             string query = txtSearch.Text.Trim().ToLower();
-            List<Workout> displayedWorkouts;
+            bool useDateFilter = chkEnableDateFilter.Checked;
+            DateTime startDate = dtpStartDate.Value.Date;
+            DateTime endDate = dtpEndDate.Value.Date;
 
-            if (string.IsNullOrWhiteSpace(query))
+            var displayedWorkouts = _workouts.AsEnumerable();
+
+            if (!string.IsNullOrWhiteSpace(query))
             {
-                displayedWorkouts = _workouts;
+                displayedWorkouts = displayedWorkouts
+                    .Where(w => w.Title != null && w.Title.ToLower().Contains(query));
             }
-            else
+
+            if (useDateFilter)
             {
-                displayedWorkouts = _workouts
-                    .Where(w => w.Title != null && w.Title.ToLower().Contains(query))
-                    .ToList();
+                displayedWorkouts = displayedWorkouts
+                    .Where(w => w.Date.Date >= startDate && w.Date.Date <= endDate);
             }
+
+            var resultList = displayedWorkouts.ToList();
 
             _bindingSource.DataSource = null;
-            _bindingSource.DataSource = displayedWorkouts;
+            _bindingSource.DataSource = resultList;
             _bindingSource.ResetBindings(false);
 
-            UpdateSummaryStatistic(displayedWorkouts);
+            UpdateSummaryStatistic(resultList);
+        }
+
+        private void chkEnableDateFilter_CheckedChanged(object? sender, EventArgs e)
+        {
+            dtpStartDate.Enabled = chkEnableDateFilter.Checked;
+            dtpEndDate.Enabled = chkEnableDateFilter.Checked;
+
+            RefreshGrid();
+        }
+
+        private void dtpStartDate_ValueChanged(object? sender, EventArgs e)
+        {
+            RefreshGrid();
+        }
+
+        private void dtpEndDate_ValueChanged(object? sender, EventArgs e)
+        {
+            RefreshGrid();
         }
 
         private void dgvWorkouts_CurrentCellDirtyStateChanged(object? sender, EventArgs e)
@@ -100,7 +131,7 @@ namespace WorkoutTracker
             }
         }
 
-        private void dgvWorkouts_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        private void dgvWorkouts_CellValueChanged(object? sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0 && dgvWorkouts.Columns[e.ColumnIndex].DataPropertyName == "IsCompleted")
             {
@@ -315,8 +346,8 @@ namespace WorkoutTracker
                 dgvWorkouts.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(24, 25, 27);
                 dgvWorkouts.ColumnHeadersDefaultCellStyle.ForeColor = textLight;
 
-                btnAbout.BackColor = Color.FromArgb(32, 33, 36); 
-                btnAbout.ForeColor = Color.FromArgb(240, 240, 240); 
+                btnAbout.BackColor = Color.FromArgb(32, 33, 36);
+                btnAbout.ForeColor = Color.FromArgb(240, 240, 240);
                 btnAbout.FlatAppearance.BorderColor = Color.FromArgb(60, 62, 66);
 
             }
@@ -370,8 +401,8 @@ namespace WorkoutTracker
                 dgvWorkouts.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(241, 245, 249);
                 dgvWorkouts.ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(51, 65, 85);
 
-                btnAbout.BackColor = Color.White; 
-                btnAbout.ForeColor = Color.FromArgb(30, 41, 59); 
+                btnAbout.BackColor = Color.White;
+                btnAbout.ForeColor = Color.FromArgb(30, 41, 59);
                 btnAbout.FlatAppearance.BorderColor = Color.FromArgb(209, 213, 219);
             }
         }
