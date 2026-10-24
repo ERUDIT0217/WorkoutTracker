@@ -39,6 +39,7 @@
             lblSummaryTitle = new Label();
             btnToggleTheme = new Button();
             btnOpenAddForm = new Button();
+            btnAbout = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvWorkouts).BeginInit();
             panelSummary.SuspendLayout();
             SuspendLayout();
@@ -78,7 +79,7 @@
             btnDelete.FlatStyle = FlatStyle.Flat;
             btnDelete.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             btnDelete.ForeColor = Color.FromArgb(185, 28, 28);
-            btnDelete.Location = new Point(958, 27);
+            btnDelete.Location = new Point(915, 26);
             btnDelete.Name = "btnDelete";
             btnDelete.Size = new Size(176, 33);
             btnDelete.TabIndex = 2;
@@ -95,7 +96,7 @@
             btnSave.FlatStyle = FlatStyle.Flat;
             btnSave.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
             btnSave.ForeColor = Color.FromArgb(30, 41, 59);
-            btnSave.Location = new Point(769, 26);
+            btnSave.Location = new Point(729, 26);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(166, 33);
             btnSave.TabIndex = 3;
@@ -163,7 +164,7 @@
             btnToggleTheme.FlatStyle = FlatStyle.Flat;
             btnToggleTheme.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
             btnToggleTheme.ForeColor = Color.FromArgb(30, 41, 59);
-            btnToggleTheme.Location = new Point(468, 26);
+            btnToggleTheme.Location = new Point(438, 26);
             btnToggleTheme.Name = "btnToggleTheme";
             btnToggleTheme.Size = new Size(147, 33);
             btnToggleTheme.TabIndex = 7;
@@ -179,7 +180,7 @@
             btnOpenAddForm.FlatStyle = FlatStyle.Flat;
             btnOpenAddForm.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
             btnOpenAddForm.ForeColor = Color.White;
-            btnOpenAddForm.Location = new Point(653, 26);
+            btnOpenAddForm.Location = new Point(609, 26);
             btnOpenAddForm.Name = "btnOpenAddForm";
             btnOpenAddForm.Size = new Size(94, 33);
             btnOpenAddForm.TabIndex = 8;
@@ -187,12 +188,29 @@
             btnOpenAddForm.UseVisualStyleBackColor = false;
             btnOpenAddForm.Click += btnOpenAddForm_Click_1;
             // 
+            // btnAbout
+            // 
+            btnAbout.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnAbout.BackColor = Color.FromArgb(243, 244, 246);
+            btnAbout.FlatAppearance.BorderColor = Color.FromArgb(209, 213, 219);
+            btnAbout.FlatStyle = FlatStyle.Flat;
+            btnAbout.Font = new Font("Segoe UI", 10F);
+            btnAbout.ForeColor = Color.FromArgb(31, 41, 55);
+            btnAbout.Location = new Point(1106, 26);
+            btnAbout.Name = "btnAbout";
+            btnAbout.Size = new Size(40, 33);
+            btnAbout.TabIndex = 1;
+            btnAbout.Text = "❓";
+            btnAbout.UseVisualStyleBackColor = false;
+            btnAbout.Click += btnAbout_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(9F, 23F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(226, 232, 240);
             ClientSize = new Size(1168, 605);
+            Controls.Add(btnAbout);
             Controls.Add(btnOpenAddForm);
             Controls.Add(btnToggleTheme);
             Controls.Add(panelSummary);
@@ -225,5 +243,6 @@
         private Label lblSummaryTitle;
         private Button btnToggleTheme;
         private Button btnOpenAddForm;
+        private Button btnAbout;
     }
 }

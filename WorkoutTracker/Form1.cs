@@ -314,6 +314,11 @@ namespace WorkoutTracker
 
                 dgvWorkouts.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(24, 25, 27);
                 dgvWorkouts.ColumnHeadersDefaultCellStyle.ForeColor = textLight;
+
+                btnAbout.BackColor = Color.FromArgb(32, 33, 36); 
+                btnAbout.ForeColor = Color.FromArgb(240, 240, 240); 
+                btnAbout.FlatAppearance.BorderColor = Color.FromArgb(60, 62, 66);
+
             }
             else
             {
@@ -364,6 +369,10 @@ namespace WorkoutTracker
 
                 dgvWorkouts.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(241, 245, 249);
                 dgvWorkouts.ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(51, 65, 85);
+
+                btnAbout.BackColor = Color.White; 
+                btnAbout.ForeColor = Color.FromArgb(30, 41, 59); 
+                btnAbout.FlatAppearance.BorderColor = Color.FromArgb(209, 213, 219);
             }
         }
 
@@ -383,6 +392,15 @@ namespace WorkoutTracker
                     RefreshGrid();
                     _isModified = true;
                 }
+            }
+        }
+
+        private void btnAbout_Click(object sender, EventArgs e)
+        {
+            using (var aboutForm = new AboutForm())
+            {
+                aboutForm.ApplyTheme(_isDarkTheme);
+                aboutForm.ShowDialog(this);
             }
         }
     }
