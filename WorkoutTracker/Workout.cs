@@ -71,5 +71,7 @@ namespace WorkoutTracker
         [DisplayName("Калорії")]
         public string Calories => $"{CalculateCaloriesBurned():F0} ккал";
 
+        [DisplayName("Статус")]
+        public bool IsCompleted { get; set; } = false;
     }
 }

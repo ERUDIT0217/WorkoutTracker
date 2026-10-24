@@ -21,6 +21,9 @@ namespace WorkoutTracker
             this.KeyPreview = true;
             this.KeyDown += Form1_KeyDown;
             this.FormClosing += Form1_FormClosing;
+            dgvWorkouts.CurrentCellDirtyStateChanged += dgvWorkouts_CurrentCellDirtyStateChanged;
+            dgvWorkouts.CellValueChanged += dgvWorkouts_CellValueChanged;
+            dgvWorkouts.RowPrePaint += dgvWorkouts_RowPrePaint;
 
             ConfigureGridColumnsExplicitly();
 
@@ -40,7 +43,7 @@ namespace WorkoutTracker
 
             dgvWorkouts.AllowUserToAddRows = false;
             dgvWorkouts.AllowUserToDeleteRows = false;
-            dgvWorkouts.ReadOnly = true;
+            dgvWorkouts.ReadOnly = false;
             dgvWorkouts.MultiSelect = true;
 
             dgvWorkouts.SelectionMode = DataGridViewSelectionMode.RowHeaderSelect;
@@ -50,13 +53,20 @@ namespace WorkoutTracker
             dgvWorkouts.ColumnHeadersHeight = 35;
             dgvWorkouts.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
-            dgvWorkouts.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Дата", DataPropertyName = "Date", FillWeight = 85 });
-            dgvWorkouts.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Назва", DataPropertyName = "Title", FillWeight = 120 });
-            dgvWorkouts.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Час, хв", DataPropertyName = "DurationInMinutes", FillWeight = 95 });
-            dgvWorkouts.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Вага, кг", DataPropertyName = "UserWeightKg", FillWeight = 90 });
-            dgvWorkouts.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Тип", DataPropertyName = "TypeTitle", FillWeight = 85 });
-            dgvWorkouts.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Деталі", DataPropertyName = "Details", FillWeight = 165 });
-            dgvWorkouts.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Калорії", DataPropertyName = "Calories", FillWeight = 85 });
+            dgvWorkouts.Columns.Add(new DataGridViewCheckBoxColumn
+            {
+                HeaderText = "Виконано",
+                DataPropertyName = "IsCompleted",
+                FillWeight = 70,
+                ReadOnly = false
+            });
+            dgvWorkouts.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Дата", DataPropertyName = "Date", FillWeight = 85, ReadOnly = true });
+            dgvWorkouts.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Назва", DataPropertyName = "Title", FillWeight = 120, ReadOnly = true });
+            dgvWorkouts.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Час, хв", DataPropertyName = "DurationInMinutes", FillWeight = 95, ReadOnly = true });
+            dgvWorkouts.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Вага, кг", DataPropertyName = "UserWeightKg", FillWeight = 90, ReadOnly = true });
+            dgvWorkouts.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Тип", DataPropertyName = "TypeTitle", FillWeight = 85, ReadOnly = true });
+            dgvWorkouts.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Деталі", DataPropertyName = "Details", FillWeight = 165, ReadOnly = true });
+            dgvWorkouts.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Калорії", DataPropertyName = "Calories", FillWeight = 85, ReadOnly = true });
         }
 
         private void RefreshGrid()
@@ -80,6 +90,46 @@ namespace WorkoutTracker
             _bindingSource.ResetBindings(false);
 
             UpdateSummaryStatistic(displayedWorkouts);
+        }
+
+        private void dgvWorkouts_CurrentCellDirtyStateChanged(object? sender, EventArgs e)
+        {
+            if (dgvWorkouts.IsCurrentCellDirty)
+            {
+                dgvWorkouts.CommitEdit(DataGridViewDataErrorContexts.Commit);
+            }
+        }
+
+        private void dgvWorkouts_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && dgvWorkouts.Columns[e.ColumnIndex].DataPropertyName == "IsCompleted")
+            {
+                _isModified = true;
+
+                dgvWorkouts.InvalidateRow(e.RowIndex);
+
+                UpdateSummaryStatistic(_workouts);
+            }
+        }
+
+        private void dgvWorkouts_RowPrePaint(object? sender, DataGridViewRowPrePaintEventArgs e)
+        {
+            if (e.RowIndex >= 0 && e.RowIndex < dgvWorkouts.Rows.Count)
+            {
+                var row = dgvWorkouts.Rows[e.RowIndex];
+
+                if (row.DataBoundItem is Workout workout)
+                {
+                    if (workout.IsCompleted)
+                    {
+                        row.DefaultCellStyle.BackColor = _isDarkTheme ? Color.FromArgb(15, 50, 35) : Color.FromArgb(187, 247, 208);
+                    }
+                    else
+                    {
+                        row.DefaultCellStyle.BackColor = _isDarkTheme ? Color.FromArgb(24, 24, 27) : Color.White;
+                    }
+                }
+            }
         }
 
         private void btnDelete_Click(object? sender, EventArgs e)
@@ -200,15 +250,17 @@ namespace WorkoutTracker
             RefreshGrid();
         }
 
-        private void UpdateSummaryStatistic(IEnumerable<Workout> currentWorkouts)
+        private void UpdateSummaryStatistic(List<Workout> list)
         {
-            var list = currentWorkouts.ToList();
-
             int totalCount = list.Count;
-            int totalDuration = list.Sum(w => w.DurationInMinutes);
-            double totalCalories = list.Sum(w => w.CalculateCaloriesBurned());
+            int completedCount = list.Where(w => w.IsCompleted).Count();
+            int plannedCount = totalCount - completedCount;
 
-            lblSummary.Text = $"Всього тренувань: {totalCount} | Загальний час: {totalDuration} хв | Спалено: {totalCalories:F1} ккал";
+            int totalMinutes = list.Sum(w => w.DurationInMinutes);
+
+            double totalCalories = list.Where(w => w.IsCompleted).Sum(w => w.CalculateCaloriesBurned());
+
+            lblSummary.Text = $"Всього: {totalCount} (Виконано: {completedCount}, Заплановано: {plannedCount}) | Загальний час: {totalMinutes} хв | Спалено: {totalCalories:F1} ккал";
         }
 
         private void ApplyTheme()
