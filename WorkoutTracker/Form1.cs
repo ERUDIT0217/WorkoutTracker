@@ -9,7 +9,7 @@ namespace WorkoutTracker
     public partial class Form1 : Form
     {
         private string _username;
-        private readonly WorkoutRepository _repository;
+        private WorkoutRepository _repository = new WorkoutRepository();
         private List<Workout> _workouts = new List<Workout>();
         private readonly BindingSource _bindingSource = new BindingSource();
         private bool _isModified = false;
@@ -21,7 +21,7 @@ namespace WorkoutTracker
 
             _username = username;
             _isDarkTheme = initialDarkTheme;
-            _repository = new WorkoutRepository(_username);
+            _repository.SetUser(_username);
             this.Text = $"WorkoutTracker — Профіль: {_username}";
 
             this.KeyPreview = true;
@@ -36,6 +36,9 @@ namespace WorkoutTracker
             chkEnableDateFilter.CheckedChanged += chkEnableDateFilter_CheckedChanged;
             dtpStartDate.ValueChanged += dtpStartDate_ValueChanged;
             dtpEndDate.ValueChanged += dtpEndDate_ValueChanged;
+
+            LoadProfilesIntoCombo();
+            cmbProfiles.SelectedIndexChanged += cmbProfiles_SelectedIndexChanged;
 
             ConfigureGridColumnsExplicitly();
 
@@ -339,6 +342,19 @@ namespace WorkoutTracker
                 txtSearch.BackColor = inputBg;
                 txtSearch.ForeColor = textLight;
 
+                cmbProfiles.BackColor = inputBg;
+                cmbProfiles.ForeColor = textLight;
+
+                dtpStartDate.CalendarForeColor = textLight;
+                dtpStartDate.CalendarMonthBackground = cardBg;
+                dtpStartDate.CalendarTitleBackColor = cardBg;
+                dtpStartDate.CalendarTitleForeColor = textLight;
+
+                dtpEndDate.CalendarForeColor = textLight;
+                dtpEndDate.CalendarMonthBackground = cardBg;
+                dtpEndDate.CalendarTitleBackColor = cardBg;
+                dtpEndDate.CalendarTitleForeColor = textLight;
+
                 dgvWorkouts.BackgroundColor = cardBg;
                 dgvWorkouts.GridColor = borderDark;
                 dgvWorkouts.DefaultCellStyle.BackColor = cardBg;
@@ -355,7 +371,6 @@ namespace WorkoutTracker
                 btnAbout.BackColor = Color.FromArgb(32, 33, 36);
                 btnAbout.ForeColor = Color.FromArgb(240, 240, 240);
                 btnAbout.FlatAppearance.BorderColor = Color.FromArgb(60, 62, 66);
-
             }
             else
             {
@@ -393,6 +408,9 @@ namespace WorkoutTracker
 
                 txtSearch.BackColor = cardBg;
                 txtSearch.ForeColor = textDark;
+
+                cmbProfiles.BackColor = cardBg;
+                cmbProfiles.ForeColor = textDark;
 
                 dgvWorkouts.BackgroundColor = cardBg;
                 dgvWorkouts.GridColor = borderLight;
@@ -439,6 +457,68 @@ namespace WorkoutTracker
             {
                 aboutForm.ApplyTheme(_isDarkTheme);
                 aboutForm.ShowDialog(this);
+            }
+        }
+
+        private void LoadProfilesIntoCombo()
+        {
+            if (cmbProfiles == null) return;
+            cmbProfiles.Items.Clear();
+
+            string dir = AppDomain.CurrentDomain.BaseDirectory;
+            if (Directory.Exists(dir))
+            {
+                var files = Directory.GetFiles(dir, "workouts_*.json");
+                foreach (var file in files)
+                {
+                    string fileName = Path.GetFileName(file);
+                    if (fileName.Length > 14)
+                    {
+                        string username = fileName.Substring(9, fileName.Length - 5 - 9);
+                        cmbProfiles.Items.Add(username);
+                    }
+                }
+            }
+
+            if (!cmbProfiles.Items.Contains(_username))
+            {
+                cmbProfiles.Items.Add(_username);
+            }
+
+            cmbProfiles.SelectedItem = _username;
+        }
+
+        private void cmbProfiles_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            string? selectedUser = cmbProfiles.SelectedItem?.ToString();
+
+            if (!string.IsNullOrEmpty(selectedUser) && selectedUser != _username)
+            {
+                if (_isModified)
+                {
+                    var result = MessageBox.Show(
+                        "Зберегти зміни для поточного профілю перед перемиканням?",
+                        "Незбережені дані",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question
+                    );
+
+                    if (result == DialogResult.Yes)
+                    {
+                        _repository.Save(_workouts);
+                    }
+                }
+
+                _username = selectedUser;
+                _repository.SetUser(_username);
+
+                _workouts = _repository.Load() ?? new List<Workout>();
+                _bindingSource.DataSource = _workouts;
+
+                RefreshGrid();
+
+                this.Text = $"WorkoutTracker — Профіль: {_username}";
+                _isModified = false;
             }
         }
     }

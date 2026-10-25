@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 
@@ -7,40 +6,43 @@ namespace WorkoutTracker
 {
     public class WorkoutRepository
     {
-        private readonly string _filePath;
-        private readonly JsonSerializerOptions _jsonOptions;
-        public WorkoutRepository(string username)
+        private string _currentUsername = "DefaultUser";
+
+        public void SetUser(string username)
         {
-            _filePath = $"workouts_{username}.json";
-            _jsonOptions = new JsonSerializerOptions
+            if (!string.IsNullOrWhiteSpace(username))
             {
-                WriteIndented = true
-            };
+                _currentUsername = username.Trim();
+            }
         }
-        
-        public void Save(List<Workout> workouts)
+
+        private string GetFilePath()
         {
-            string jsonString = JsonSerializer.Serialize(workouts, _jsonOptions);
-            File.WriteAllText(_filePath, jsonString);
+            return $"workouts_{_currentUsername}.json";
         }
 
         public List<Workout> Load()
         {
-            if (!File.Exists(_filePath))
+            string path = GetFilePath();
+            if (!File.Exists(path))
+                return new List<Workout>();
+
+            try
+            {
+                string json = File.ReadAllText(path);
+                return JsonSerializer.Deserialize<List<Workout>>(json) ?? new List<Workout>();
+            }
+            catch
             {
                 return new List<Workout>();
             }
+        }
 
-            string jsonString = File.ReadAllText(_filePath);
-
-            if (string.IsNullOrWhiteSpace(jsonString))
-            {
-                return new List<Workout>();
-            }
-
-            var workouts = JsonSerializer.Deserialize<List<Workout>>(jsonString, _jsonOptions);
-            return workouts ?? new List<Workout>();
+        public void Save(List<Workout> workouts)
+        {
+            string path = GetFilePath();
+            string json = JsonSerializer.Serialize(workouts, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(path, json);
         }
     }
-    
 }

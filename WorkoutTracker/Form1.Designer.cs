@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             dgvWorkouts = new DataGridView();
             btnDelete = new Button();
             btnSave = new Button();
@@ -45,6 +45,7 @@
             dtpEndDate = new DateTimePicker();
             label1 = new Label();
             label2 = new Label();
+            cmbProfiles = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)dgvWorkouts).BeginInit();
             panelSummary.SuspendLayout();
             SuspendLayout();
@@ -55,14 +56,14 @@
             dgvWorkouts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvWorkouts.BackgroundColor = Color.White;
             dgvWorkouts.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = Color.FromArgb(240, 243, 246);
-            dataGridViewCellStyle4.Font = new Font("Segoe UI", 10F);
-            dataGridViewCellStyle4.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
-            dgvWorkouts.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(240, 243, 246);
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 10F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvWorkouts.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvWorkouts.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvWorkouts.EnableHeadersVisualStyles = false;
             dgvWorkouts.Location = new Point(1, 82);
@@ -72,7 +73,7 @@
             dgvWorkouts.RowHeadersVisible = false;
             dgvWorkouts.RowHeadersWidth = 51;
             dgvWorkouts.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvWorkouts.Size = new Size(1494, 393);
+            dgvWorkouts.Size = new Size(1504, 393);
             dgvWorkouts.TabIndex = 0;
             // 
             // btnDelete
@@ -84,7 +85,7 @@
             btnDelete.FlatStyle = FlatStyle.Flat;
             btnDelete.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             btnDelete.ForeColor = Color.FromArgb(185, 28, 28);
-            btnDelete.Location = new Point(1242, 26);
+            btnDelete.Location = new Point(1141, 28);
             btnDelete.Name = "btnDelete";
             btnDelete.Size = new Size(176, 33);
             btnDelete.TabIndex = 2;
@@ -101,7 +102,7 @@
             btnSave.FlatStyle = FlatStyle.Flat;
             btnSave.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
             btnSave.ForeColor = Color.FromArgb(30, 41, 59);
-            btnSave.Location = new Point(1056, 26);
+            btnSave.Location = new Point(969, 29);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(166, 33);
             btnSave.TabIndex = 3;
@@ -146,7 +147,7 @@
             panelSummary.Controls.Add(lblSummaryTitle);
             panelSummary.Location = new Point(3, 494);
             panelSummary.Name = "panelSummary";
-            panelSummary.Size = new Size(1492, 116);
+            panelSummary.Size = new Size(1502, 116);
             panelSummary.TabIndex = 6;
             // 
             // lblSummaryTitle
@@ -169,7 +170,7 @@
             btnToggleTheme.FlatStyle = FlatStyle.Flat;
             btnToggleTheme.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
             btnToggleTheme.ForeColor = Color.FromArgb(30, 41, 59);
-            btnToggleTheme.Location = new Point(765, 26);
+            btnToggleTheme.Location = new Point(716, 27);
             btnToggleTheme.Name = "btnToggleTheme";
             btnToggleTheme.Size = new Size(147, 33);
             btnToggleTheme.TabIndex = 7;
@@ -185,7 +186,7 @@
             btnOpenAddForm.FlatStyle = FlatStyle.Flat;
             btnOpenAddForm.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
             btnOpenAddForm.ForeColor = Color.White;
-            btnOpenAddForm.Location = new Point(936, 26);
+            btnOpenAddForm.Location = new Point(869, 29);
             btnOpenAddForm.Name = "btnOpenAddForm";
             btnOpenAddForm.Size = new Size(94, 33);
             btnOpenAddForm.TabIndex = 8;
@@ -201,7 +202,7 @@
             btnAbout.FlatStyle = FlatStyle.Flat;
             btnAbout.Font = new Font("Segoe UI", 10F);
             btnAbout.ForeColor = Color.FromArgb(31, 41, 55);
-            btnAbout.Location = new Point(1433, 26);
+            btnAbout.Location = new Point(1442, 29);
             btnAbout.Name = "btnAbout";
             btnAbout.Size = new Size(40, 33);
             btnAbout.TabIndex = 1;
@@ -212,7 +213,7 @@
             // chkEnableDateFilter
             // 
             chkEnableDateFilter.AutoSize = true;
-            chkEnableDateFilter.Location = new Point(239, 32);
+            chkEnableDateFilter.Location = new Point(242, 30);
             chkEnableDateFilter.Name = "chkEnableDateFilter";
             chkEnableDateFilter.Size = new Size(159, 27);
             chkEnableDateFilter.TabIndex = 9;
@@ -230,7 +231,7 @@
             // dtpEndDate
             // 
             dtpEndDate.Format = DateTimePickerFormat.Short;
-            dtpEndDate.Location = new Point(602, 29);
+            dtpEndDate.Location = new Point(590, 29);
             dtpEndDate.Name = "dtpEndDate";
             dtpEndDate.Size = new Size(107, 30);
             dtpEndDate.TabIndex = 11;
@@ -247,18 +248,27 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(564, 32);
+            label2.Location = new Point(554, 31);
             label2.Name = "label2";
             label2.Size = new Size(30, 23);
             label2.TabIndex = 13;
             label2.Text = "по";
+            // 
+            // cmbProfiles
+            // 
+            cmbProfiles.FormattingEnabled = true;
+            cmbProfiles.Location = new Point(1323, 29);
+            cmbProfiles.Name = "cmbProfiles";
+            cmbProfiles.Size = new Size(104, 31);
+            cmbProfiles.TabIndex = 14;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(9F, 23F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(226, 232, 240);
-            ClientSize = new Size(1495, 611);
+            ClientSize = new Size(1505, 611);
+            Controls.Add(cmbProfiles);
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(dtpEndDate);
@@ -303,5 +313,6 @@
         private DateTimePicker dtpEndDate;
         private Label label1;
         private Label label2;
+        private ComboBox cmbProfiles;
     }
 }
