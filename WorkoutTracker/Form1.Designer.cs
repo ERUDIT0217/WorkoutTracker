@@ -256,6 +256,7 @@
             // 
             // cmbProfiles
             // 
+            cmbProfiles.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             cmbProfiles.FormattingEnabled = true;
             cmbProfiles.Location = new Point(1323, 29);
             cmbProfiles.Name = "cmbProfiles";
